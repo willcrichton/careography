@@ -1,0 +1,8 @@
+{exec} = require 'child_process'
+
+coffeeFiles = [
+  'app.coffee'
+]
+
+task 'build', 'Build coffeescript files', ->
+  exec "coffee -c --output ../js/ #{coffeeFiles.toString().replace(/,/g, ' ')}"
