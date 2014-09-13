@@ -5,7 +5,7 @@ import math
 app = Flask(__name__)
 cake = Cake(app)
 
-counter = [0]
+counter = [1]
 path = []
 (headingx, headingy) = (0.0, 1.0)
 prevInstr = (0, 0, 0)
@@ -43,12 +43,13 @@ def update():
 @app.route('/query')
 def query():
     print path
-    if len(path) < 2:
-        return ' '.join(map(repr, [0,0,0,0,0,0,0]))
-    (currpt, prevpt) = (path[0], path[0])
+    if len(path)-counter[0] < 2:
+        return ' '.join(map(repr, [0,0,0,0,0,0,len(path)]))
+    (currpt, prevpt) = (path[counter[0]+1], path[counter[0]])
+    counter[0] += 1
     (L, R, t) = reorient((currpt.x, currpt.y), (prevpt.x, prevpt.y))
     #fix thing but we ignore this for now.
-    args = [L, R, t, 4, 3, 2, 1]
+    args = [L, R, t, 3, 3, 2, len(path)]
     return ' '.join(map(repr, args))
 
 #returns the energy levels needed to reorient from (a,b) to (c,d)
@@ -57,6 +58,8 @@ def reorient((a,b), (c,d)):
     quarterTime = 4
     (x,y) = (c-a, d-b)
     magnitude = math.hypot(x,y)
+    if magnitude == 0:
+        return (0, 0, quarterTime)
     (unitx, unity) = (x / magnitude, y / magnitude)
     turnAngle = math.acos(unitx*headingx + unity*headingy)
     turnDir = 1 if turnAngle < quarter else -1
