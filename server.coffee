@@ -14,6 +14,12 @@ headingx = 0.0
 headingy = 1.0
 carC = 5  #TEMPORARY!! diameter of car
 
+cap = (powerlevel) ->
+  if powerlevel > 255
+    return 255
+  else
+    return Math.floor(powerlevel)
+
 powerup = (theta, d) ->
   # deal with small theta case (go straight)
   if theta < (Math.PI/16)
@@ -54,7 +60,7 @@ reorient = (p1, p2) ->
     return {L: 100 * turnDir, R: -100 * turnDir, t: quarterTime * (turnAngle / quarter)}
   else
     powers = powerup(turnAngle, magnitude)
-    return {L: powers.powl, R: powers.powr, t: 1}
+    return {L: cap(powers.powl), R: cap(powers.powr), t: 1}
 
 app.use '/query', (req, res) ->
   io.sockets.emit('moved', path[counter])
