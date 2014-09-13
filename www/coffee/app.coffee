@@ -7,6 +7,8 @@ define (require) ->
   paper.install(window)
   paper.setup('main')
 
+  console.log 'test'
+
   # wait at least DELTA_THREHSOLD milliseconds to update server
   DELTA_THRESHOLD = 100
   COLOR_PRESETS = [
@@ -21,9 +23,13 @@ define (require) ->
   ]
 
   socket = io('http://localhost')
+  paths = []
   path = null
   lastSend = null
   pathColor = new Color(0, 0, 0)
+  visitedPath = new Path()
+  visitedPath.strokeWidth = 8
+  visitedPath.strokeColor = 'red'
 
   getTime = ->
     new Date().getTime()
@@ -61,6 +67,10 @@ define (require) ->
 
   tool.onMouseUp = ->
     path.simplify(2.0)
+    paths = paths.concat(path.segments)
+
+  socket.on 'moved', (index) ->
+    visitedPath.add(paths[index].point)
 
   $(document).ready ->
     $('#colors').css('width', COLOR_PRESETS.length * 50)

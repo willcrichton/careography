@@ -40,12 +40,19 @@ app.use '/query', (req, res) ->
     res.send([0, 0, 0, 0, 0, 0, path.length].join(' '))
     return
 
+  io.sockets.emit('moved', counter)
+
   currpt = path[counter + 1]
   prevpt = path[counter]
   counter += 1
 
   data = reorient(currpt, prevpt)
   res.send([data.L, data.R, data.t, 3, 3, 2, path.length].join(' '))
+
+app.use (req, res, next)->
+  counter = 0
+  path = []
+  next()
 
 app.use(express.static(__dirname + '/www'))
 
