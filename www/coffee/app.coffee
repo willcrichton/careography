@@ -27,9 +27,6 @@ define (require) ->
   path = null
   lastSend = null
   pathColor = new Color(0, 0, 0)
-  visitedPath = new Path()
-  visitedPath.strokeWidth = 8
-  visitedPath.strokeColor = 'red'
 
   getTime = ->
     new Date().getTime()
@@ -67,9 +64,21 @@ define (require) ->
 
   tool.onMouseUp = ->
     paths = paths.concat(path.segments)
+    sendPoint
+      x: event.point.x
+      y: event.point.y
+      start: false
+      delta: getTime() - lastSend
 
-  socket.on 'moved', (index) ->
-    visitedPath.add(paths[index].point)
+  visitedPath = null
+  socket.on 'moved', (point) ->
+    if point.start
+      visitedPath = new Path()
+      visitedPath.strokeWidth = 8
+      visitedPath.strokeColor = 'red'
+
+    visitedPath.add(new Point(point.x, point.y))
+    console.log(visitedPath, point)
     view.draw()
 
   $(document).ready ->
