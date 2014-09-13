@@ -30,10 +30,11 @@ define (require) ->
   sendPoint = (args) ->
     $.ajax
       url: '/update'
-      data: $.extend args,
+      data: $.extend(args,
         r: pathColor.red
         g: pathColor.green
         b: pathColor.blue
+      )
 
   tool = new Tool()
   tool.onMouseDown = (event) ->
