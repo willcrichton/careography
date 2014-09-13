@@ -5,13 +5,15 @@ import math
 app = Flask(__name__)
 cake = Cake(app)
 
+counter = [0]
 path = []
-(headingx, headingy) = (0.0, 1.0) 
+(headingx, headingy) = (0.0, 1.0)
 prevInstr = (0, 0, 0)
+
 @app.route('/')
 def index():
     del path[:]
-    
+
     return render_template('index.html')
 
 class Point:
@@ -61,9 +63,9 @@ def reorient((a,b), (c,d)):
     #naive for now
     return (100 * turnDir, -100 * turnDir, quarterTime * (turnAngle / quarter))
 
-    
 
-#return a set of directions to be run 
+
+#return a set of directions to be run
 if __name__ == "__main__":
     cake.init_app(app)
     app.run(host='0.0.0.0', debug=True)

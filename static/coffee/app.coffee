@@ -22,7 +22,7 @@ define (require) ->
 
   path = null
   lastSend = null
-  color = new Color(0, 0, 0)
+  pathColor = new Color(0, 0, 0)
 
   getTime = ->
     new Date().getTime()
@@ -31,14 +31,14 @@ define (require) ->
     $.ajax
       url: '/update'
       data: $.extend args,
-        r: color.red
-        g: color.green
-        b: color.blue
+        r: pathColor.red
+        g: pathColor.green
+        b: pathColor.blue
 
   tool = new Tool()
   tool.onMouseDown = (event) ->
     path = new Path()
-    path.strokeColor = color
+    path.strokeColor = pathColor
     path.strokeWidth = 5
     path.add(event.point)
 
@@ -74,12 +74,15 @@ define (require) ->
       $('#colors').append($div)
 
     $('.color').click ->
-      color = new Color($(this).data('color').map((n) -> n / 255))
+      pathColor = new Color($(this).data('color').map((n) -> n / 255))
 
     $('#splash').click ->
-      document.body.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+      if document.body.webkitRequestFullscreen?
+        document.body.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+      else if document.body.mozRequestFullScreen?
+        document.body.mozRequestFullScreen()
 
-    $(document.body).on 'webkitfullscreenchange', ->
+    $(document).on 'fullscreenchange mozfullscreenchange webkitfullscreenchange', ->
       $('#canvas').css
         opacity: '0.01'
         display: 'block'
