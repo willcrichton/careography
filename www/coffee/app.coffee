@@ -7,8 +7,6 @@ define (require) ->
   paper.install(window)
   paper.setup('main')
 
-  console.log 'test'
-
   # wait at least DELTA_THREHSOLD milliseconds to update server
   DELTA_THRESHOLD = 100
   COLOR_PRESETS = [
@@ -40,14 +38,17 @@ define (require) ->
     path = new Path()
     path.strokeColor = pathColor
     path.strokeWidth = 5
+    path.strokeCap = 'round'
+    path.opacity = 0.9
     path.add(event.point)
 
-    lastSend = getTime()
     sendPoint
       x: event.point.x
       y: event.point.y
       start: true
       delta: 0
+
+    lastSend = getTime()
 
   tool.onMouseDrag = (event) ->
     path.add(event.point)
@@ -55,8 +56,8 @@ define (require) ->
     time = getTime()
     if time - lastSend > DELTA_THRESHOLD
       sendPoint
-        x: event.point.x
-        y: event.point.y
+        x: parseInt(Math.floor(event.point.x))
+        y: parseInt(Math.floor(event.point.y))
         start: false
         delta: time - lastSend
 
@@ -84,12 +85,15 @@ define (require) ->
   $(document).ready ->
     $('#colors').css('width', COLOR_PRESETS.length * 50)
     for color in COLOR_PRESETS
-      $div = $('<div class="color"></div>');
+      active = if color[0] == 0 and color[1] == 0 and color[2] == 0 then "active" else ""
+      $div = $("<div class='color #{active}'></div>");
       $div.css('background-color', 'rgb(' + color.join(',') + ')')
       $div.data('color', color)
       $('#colors').append($div)
 
     $('.color').click ->
+      $('.color').removeClass('active')
+      $(this).addClass('active')
       pathColor = new Color($(this).data('color').map((n) -> n / 255))
 
     $('#splash').click ->
