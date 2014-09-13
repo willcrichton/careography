@@ -12,6 +12,24 @@ path = []
 counter = 0
 headingx = 0.0
 headingy = 1.0
+carC = 5  #TEMPORARY!! diameter of car
+
+powerup = (theta, d) ->
+  # deal with small theta case (go straight)
+  if theta < (Math.PI/16)
+    return (powl: 100, powr: 100)
+  part1 = (d / (Math.PI * theta))
+  part2 = (carC/2)
+  r = (d / (Math.PI * theta)) - (carC / 2)
+  if theta < Math.PI
+    powl = (r + carC)*Math.PI*theta
+    powr = (r)*Math.PI*theta
+  else
+    powr = (r + carC)*Math.PI*theta
+    powl = (r)*Math.PI*theta
+ # console.log(theta,  r, "dist: ", d, "powl", powl, "powr", powr)
+
+  return (powl: powl, powr: powr)    
 
 reorient = (p1, p2) ->
   a = p1.x
@@ -19,7 +37,7 @@ reorient = (p1, p2) ->
   c = p2.x
   d = p2.y
 
-  quarter = Math.PI / 4
+  quarter = Math.PI / 2
   quarterTime = 4
   x = c - a
   y = d - b
@@ -31,9 +49,12 @@ reorient = (p1, p2) ->
   unitx = x / magnitude
   unity = y / magnitude
   turnAngle = Math.acos(unitx * headingx + unity * headingy)
-  turnDir = if turnAngle < quarter then 1 else -1
-
-  return {L: 100 * turnDir, R: -100 * turnDir, t: quarterTime * (turnAngle / quarter)}
+  if turnAngle > quarter and turnAngle < (3*quarter)
+    turnDir = if (turnAngle > (2*quarter)) then 1 else -1 
+    return {L: 100 * turnDir, R: -100 * turnDir, t: quarterTime * (turnAngle / quarter)}
+  else
+    powers = powerup(turnAngle, magnitude)
+    return {L: powers.powl, R: powers.powr, t: 1}
 
 app.use '/query', (req, res) ->
   io.sockets.emit('moved', path[counter])
@@ -44,10 +65,11 @@ app.use '/query', (req, res) ->
 
   currpt = path[counter + 1]
   prevpt = path[counter]
+#  console.log(prevpt, "to" , currpt)
   counter += 1
 
   data = reorient(currpt, prevpt)
-  res.send([data.L, data.R, data.t, 3, 3, 2, path.length].join(' '))
+  res.send([data.L, data.R, data.t, prevpt.x, prevpt.y, counter, path.length].join(' '))
 
 app.use (req, res, next)->
   counter = 0
