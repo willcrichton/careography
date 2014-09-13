@@ -66,11 +66,11 @@ define (require) ->
       lastSend = time
 
   tool.onMouseUp = ->
-    path.simplify(2.0)
     paths = paths.concat(path.segments)
 
   socket.on 'moved', (index) ->
     visitedPath.add(paths[index].point)
+    view.draw()
 
   $(document).ready ->
     $('#colors').css('width', COLOR_PRESETS.length * 50)
