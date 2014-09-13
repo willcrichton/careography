@@ -34,7 +34,7 @@ def update():
     delta = int(request.args.get('delta'))
     color = (int(request.args.get('r')), int(request.args.get('g')), int(request.args.get('b')))
     start = request.args.get('start')
-    #heading = request.args.get('heading') method does not exist yet.
+    # heading = request.args.get('heading') method does not exist yet.
     path.append(Point(x, y, delta, start, color))
 
     return ''
@@ -48,11 +48,11 @@ def query():
     (currpt, prevpt) = (path[counter[0]+1], path[counter[0]])
     counter[0] += 1
     (L, R, t) = reorient((currpt.x, currpt.y), (prevpt.x, prevpt.y))
-    #fix thing but we ignore this for now.
+    # fix thing but we ignore this for now.
     args = [L, R, t, 3, 3, 2, len(path)]
     return ' '.join(map(repr, args))
 
-#returns the energy levels needed to reorient from (a,b) to (c,d)
+# returns the energy levels needed to reorient from (a,b) to (c,d)
 def reorient((a,b), (c,d)):
     quarter = math.pi/4
     quarterTime = 4
@@ -63,12 +63,10 @@ def reorient((a,b), (c,d)):
     (unitx, unity) = (x / magnitude, y / magnitude)
     turnAngle = math.acos(unitx*headingx + unity*headingy)
     turnDir = 1 if turnAngle < quarter else -1
-    #naive for now
+    # naive for now
     return (100 * turnDir, -100 * turnDir, quarterTime * (turnAngle / quarter))
 
-
-
-#return a set of directions to be run
+# return a set of directions to be run
 if __name__ == "__main__":
     cake.init_app(app)
     app.run(host='0.0.0.0', debug=True)
