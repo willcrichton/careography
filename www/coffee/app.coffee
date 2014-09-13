@@ -10,14 +10,14 @@ define (require) ->
   # wait at least DELTA_THREHSOLD milliseconds to update server
   DELTA_THRESHOLD = 100
   COLOR_PRESETS = [
-    [0, 0, 0],
-    [255, 0, 0],
-    [0, 255, 0],
-    [0, 0, 255],
-    [255, 255, 0],
-    [0, 255, 255],
-    [255, 0, 255],
-    [255, 255, 255]
+    [20, 20, 20]
+    [210, 45, 45]
+    [220, 70, 210]
+    [45, 100, 210]
+    [100, 220, 220]
+    [45, 145, 35]
+    [235, 210, 55]
+    [245, 245, 245]
   ]
 
   socket = io('http://localhost')
@@ -63,7 +63,7 @@ define (require) ->
 
       lastSend = time
 
-  tool.onMouseUp = ->
+  tool.onMouseUp = (event) ->
     paths = paths.concat(path.segments)
     sendPoint
       x: event.point.x
@@ -85,7 +85,7 @@ define (require) ->
   $(document).ready ->
     $('#colors').css('width', COLOR_PRESETS.length * 50)
     for color in COLOR_PRESETS
-      active = if color[0] == 0 and color[1] == 0 and color[2] == 0 then "active" else ""
+      active = if color[0] == COLOR_PRESETS[0][0] and color[1] == COLOR_PRESETS[0][1] and color[2] == COLOR_PRESETS[0][2] then "active" else ""
       $div = $("<div class='color #{active}'></div>");
       $div.css('background-color', 'rgb(' + color.join(',') + ')')
       $div.data('color', color)
@@ -111,3 +111,11 @@ define (require) ->
         $('#splash').fadeOut(1000)
         $('#canvas').animate({opacity: 1}, 1000)
       , 1000)
+
+    $(document).on 'keyup', (event) ->
+      if event.which != 67 then return
+      for path in paths
+        path.remove()
+
+      visitedPath?.remove()
+      view.draw()
