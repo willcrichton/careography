@@ -22,8 +22,8 @@ class Point:
 
 @app.route('/update')
 def update():
-    x = int(request.args.get('x'))
-    y = int(request.args.get('y'))
+    x = float(request.args.get('x'))
+    y = float(request.args.get('y'))
     delta = int(request.args.get('delta'))
     color = (int(request.args.get('r')), int(request.args.get('g')), int(request.args.get('b')))
     start = request.args.get('start')
@@ -34,9 +34,9 @@ def update():
 # returns (left motor energy, right motor energy, duration, light on, light r, light g, light b)
 @app.route('/query')
 def query():
-    args = [0, 0, 0, 0, 0, 0, 0]
+    args = [1, 0, 0, 0, 0, 0, 0]
     return ' '.join(map(repr, args))
 
 if __name__ == "__main__":
     cake.init_app(app)
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

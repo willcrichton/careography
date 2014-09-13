@@ -1,0 +1,55 @@
+@font-face {
+    font-family: 'hellogoodbye';
+    src: url('fonts/hellogoodbye-webfont.eot');
+    src: url('fonts/hellogoodbye-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/hellogoodbye-webfont.woff2') format('woff2'),
+         url('fonts/hellogoodbye-webfont.woff') format('woff'),
+         url('fonts/hellogoodbye-webfont.ttf') format('truetype'),
+         url('fonts/hellogoodbye-webfont.svg#hello_goodbyeregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    border: none;
+}
+
+#splash {
+    width: 200px;
+    height: 100px;
+    position: absolute;
+    margin: auto;
+    top: 0; left: 0; bottom: 0; right: 0;
+    cursor: pointer;
+}
+
+h1 {
+    font-family: 'hellogoodbye', Arial;
+    font-size: 72px;
+    text-align: center;
+}
+
+#canvas {
+    display: none;
+}
+
+#colors {
+    margin: auto;
+    left: 0; right: 0;
+    width: 500px;
+    position: absolute;
+}
+
+.color {
+    width: 50px;
+    height: 50px;
+    float: left;
+    cursor: pointer;
+}
+
+canvas {
+    background: #FFE0F8;
+}
