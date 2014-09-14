@@ -48,14 +48,14 @@ powerup = (theta, d, right) ->
   return (powl: distScaling*powl, powr: distScaling*powr)
 
 rightness = (a,b, c,d) ->
- #   console.log("checking rightness of","(", a, b, ") and (", c, d,")")
-    if (b >= 0 and d >= 0)
-       return a <= c
-    if (b <= 0 and d <= 0)
-       return a > c
-    else
-       return not rightness(-a,-b, c,d)
+  while true
+    cond1 = b >= 0 and d >= 0
+    cond2 = b <= 0 and d <= 0
+    if cond1 then return a <= c
+    if cond2 then return a >= c
 
+    a = -a
+    b = -b
 
 reorient = (p1, p2) ->
   a = p1.x
@@ -83,7 +83,7 @@ reorient = (p1, p2) ->
   headingx = unitx
   headingy = unity
 
-#  console.log(turnAngle, p1.delta)
+  console.log(turnAngle)
 
   if turnAngle > (quarter / 3)
     turnDir = if right then 1 else -1
@@ -117,8 +117,12 @@ app.use '/query', (req, res) ->
 
 
   data = reorient(currpt, prevpt)
+  if light == 0
+    factor = 4
+  else
+    factor = 1
   if data.L * data.R == -65025
-    queuedIns.push ([120, Math.floor(0.85*120), data.t, light, currpt.y, headingx, headingy])
+    queuedIns.push ([120, Math.floor(0.85*120), factor * data.t, light, currpt.y, headingx, headingy])
   args = [data.L, Math.floor(0.85*data.R), data.t, light, currpt.y, headingx, headingy]
   console.log(args)
   res.send(args.join(' '))
