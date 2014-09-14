@@ -20,7 +20,7 @@ define (require) ->
     [245, 245, 245]
   ]
 
-  socket = io('http://localhost')
+  socket = io('http://' + document.location.host)
   paths = []
   path = null
   lastSend = null
