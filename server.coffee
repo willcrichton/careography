@@ -15,10 +15,10 @@ headingy = -1.0
 queuedIns = []
 scaling = 4  #try not to change this number
 distScaling = 5
-walkScaling = 4
+walkScaling = 15
 waitTime = 250
-revolution = 1700
-
+revolution = 1250
+distThres = 10 #must draw at least distThres pixels to move
 
 carC = 50  #TEMPORARY!! diameter of car
 
@@ -50,7 +50,7 @@ powerup = (theta, d, right) ->
 rightness = (a,b, c,d) ->
  #   console.log("checking rightness of","(", a, b, ") and (", c, d,")")
     if (b >= 0 and d >= 0)
-       return a < c
+       return a <= c
     if (b <= 0 and d <= 0)
        return a > c
     else
@@ -64,13 +64,11 @@ reorient = (p1, p2) ->
   d = p2.y
 
   quarter = Math.PI / 2
-  quarterTime = revolution / (4 * scaling)
+  quarterTime = revolution / scaling
   x = a - c
   y = b - d
 
   magnitude = Math.sqrt(x * x + y * y)
-  if magnitude == 0
-    return {L: 0, R: 0, t: p2.delta}
 
   unitx = x / magnitude
   unity = y / magnitude
@@ -85,21 +83,22 @@ reorient = (p1, p2) ->
   headingx = unitx
   headingy = unity
 
-  console.log(turnAngle, p1.delta)
+#  console.log(turnAngle, p1.delta)
 
-  if turnAngle > (quarter / 4)
+  if turnAngle > (quarter / 3)
     turnDir = if right then 1 else -1
     return {L: 255 * turnDir, R: -255 * turnDir, t: quarterTime * (turnAngle/quarter)}
   else
     powers = powerup(turnAngle, magnitude, right)
-    return {L: cap(powers.powl), R: cap(powers.powr), t: Math.floor(p1.delta)}
+    if magnitude < distThres
+      return {L: 70, R: 70, t: p1.delta}
+    return {L: cap(powers.powl), R: cap(powers.powr), t: walkScaling * magnitude}
 
 app.use '/query', (req, res) ->
   if path[counter]?
     io.sockets.emit('moved', path[counter])
 
   if path.length - counter < 2
-    console.log("0")
     res.send([0, 0, waitTime, 0, 0, 0, path.length].join(' '))
     return
   if queuedIns.length > 0
@@ -110,13 +109,17 @@ app.use '/query', (req, res) ->
 
   currpt = path[counter + 1]
   prevpt = path[counter]
+#  console.log(currpt.start)
 #  console.log(prevpt, "to" , currpt)
   counter += 1
 
+  light = if currpt.start then 0 else 1
+
+
   data = reorient(currpt, prevpt)
   if data.L * data.R == -65025
-    queuedIns.push ([120, 120, currpt.delta, currpt.x, currpt.y, headingx, headingy])
-  args = [data.L, data.R, scaling*data.t, currpt.x, currpt.y, headingx, headingy]
+    queuedIns.push ([120, Math.floor(0.85*120), data.t, light, currpt.y, headingx, headingy])
+  args = [data.L, Math.floor(0.85*data.R), data.t, light, currpt.y, headingx, headingy]
   console.log(args)
   res.send(args.join(' '))
 
