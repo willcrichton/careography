@@ -114,7 +114,7 @@ app.use '/query', (req, res) ->
   counter += 1
 
   light = if currpt.start then 0 else 1
-
+  (r,g,b) = currpt.color
 
   data = reorient(currpt, prevpt)
   if light == 0
@@ -122,8 +122,8 @@ app.use '/query', (req, res) ->
   else
     factor = 1
   if data.L * data.R == -65025
-    queuedIns.push ([120, Math.floor(0.85*120), factor * data.t, light, currpt.y, headingx, headingy])
-  args = [data.L, Math.floor(0.85*data.R), data.t, light, currpt.y, headingx, headingy]
+    queuedIns.push ([120, Math.floor(0.85*120), data.t, light, r, g, b])
+  args = [data.L, Math.floor(0.85*data.R), data.t, light, r, g, b]
   console.log(args)
   res.send(args.join(' '))
 
